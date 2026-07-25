@@ -50,6 +50,11 @@ export default function HeroScene() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [quality, setQuality] = useState<Quality>("high");
   const [visible, setVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 768px)").matches
+  );
   const { theme } = useTheme();
   const isLight = theme === "light";
 
@@ -58,14 +63,20 @@ export default function HeroScene() {
   // Bloom only reads well on dark backgrounds; skip it in light mode.
   const useEffects = quality !== "off" && !isLight;
 
-  // Decide quality once on mount.
+  // Decide quality once on mount, and track viewport size for a
+  // responsive laptop layout (centered on mobile, right-side on desktop).
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    const mq = window.matchMedia("(max-width: 768px)");
     const cores = navigator.hardwareConcurrency ?? 4;
     if (reduced) setQuality("off");
-    else if (mobile || cores <= 4) setQuality("low");
+    else if (mq.matches || cores <= 4) setQuality("low");
     else setQuality("high");
+
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
 
   // Only render while the canvas is on screen.
@@ -95,7 +106,7 @@ export default function HeroScene() {
           depth: true,
         }}
         performance={{ min: 0.4 }}
-        camera={{ position: [0, 0.4, 7], fov: 45 }}
+        camera={{ position: [0, 0.4, 7], fov: isMobile ? 58 : 45 }}
         className="!absolute inset-0"
       >
         <Suspense fallback={null}>
@@ -113,7 +124,7 @@ export default function HeroScene() {
           <pointLight position={[4, -2, 2]} intensity={isLight ? 8 : 18} color="#60A5FA" />
           {quality === "high" && !isLight && <Environment preset="night" />}
 
-          <Laptop />
+          <Laptop mobile={isMobile} />
           <Holograms />
           {quality !== "off" && (
             <Particles

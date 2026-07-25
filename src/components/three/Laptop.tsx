@@ -26,20 +26,29 @@ const CODE_LINES = [
   { y: -0.58, w: 1.25, accent: true },
 ];
 
-export function Laptop() {
+export function Laptop({ mobile = false }: { mobile?: boolean }) {
   const group = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!group.current) return;
     const t = state.clock.getElapsedTime();
-    // Gentle 3/4-view idle sway (time-based → frame-rate independent).
-    group.current.rotation.y = -0.45 + Math.sin(t * 0.3) * 0.12;
+    // Face more forward on mobile so the screen is clearly visible;
+    // keep the 3/4 view on desktop. (Time-based → frame-rate independent.)
+    const baseYaw = mobile ? -0.18 : -0.45;
+    group.current.rotation.y = baseYaw + Math.sin(t * 0.3) * 0.12;
     group.current.rotation.x = 0.06 + Math.sin(t * 0.4) * 0.02;
   });
 
+  // On mobile the laptop is centered and pushed lower (clear of the hero
+  // text); on desktop it sits to the right beside the text.
+  const scale = mobile ? 0.62 : 0.82;
+  const position: [number, number, number] = mobile
+    ? [0, -1.0, 0]
+    : [1.9, -0.25, 0];
+
   return (
     <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.5}>
-      <group ref={group} scale={0.82} position={[1.9, -0.25, 0]}>
+      <group ref={group} scale={scale} position={position}>
         {/* Base / keyboard deck */}
         <RoundedBox args={[3.2, 0.16, 2.2]} radius={0.08} smoothness={3}>
           <meshStandardMaterial color="#0e1626" metalness={0.8} roughness={0.35} />
