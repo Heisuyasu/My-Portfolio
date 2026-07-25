@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/*  Theme tokens                                                       */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Themeable colors as space-separated RGB channels so Tailwind's
+     opacity modifiers (e.g. bg-accent/40) keep working via
+     rgb(var(--x) / <alpha-value>). */
+  --background: 3 7 18; /* #030712 */
+  --surface: 17 24 39; /* #111827 */
+  --accent: 59 130 246; /* #3b82f6 */
+  --accent-glow: 96 165 250; /* #60a5fa */
+  --foreground: 249 250 251; /* #f9fafb */
+  --muted: 148 163 184; /* #94a3b8 */
+
+  --border: rgba(148, 163, 184, 0.12);
+  --glass: rgba(17, 24, 39, 0.55);
+
+  /* Theme-aware neutral fills (replace hardcoded white/x utilities). */
+  --fill-soft: rgba(255, 255, 255, 0.05);
+  --fill-strong: rgba(255, 255, 255, 0.1);
+
+  color-scheme: dark;
+}
+
+/* Light mode overrides (toggled by adding `.light` to <html>). */
+.light {
+  --background: 238 242 248; /* #eef2f8 */
+  --surface: 255 255 255; /* #ffffff */
+  --accent: 37 99 235; /* #2563eb */
+  --accent-glow: 59 130 246; /* #3b82f6 */
+  --foreground: 15 23 42; /* #0f172a */
+  --muted: 71 85 105; /* #475569 */
+  --border: rgba(15, 23, 42, 0.12);
+  --glass: rgba(255, 255, 255, 0.72);
+  --fill-soft: rgba(15, 23, 42, 0.04);
+  --fill-strong: rgba(15, 23, 42, 0.07);
+  color-scheme: light;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Base                                                               */
+/* ------------------------------------------------------------------ */
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Lenis smooth-scroll: disable native smooth to avoid double-scrolling. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Hide the native cursor on devices that support the custom one. */
+@media (hover: hover) and (pointer: fine) {
+  body.custom-cursor,
+  body.custom-cursor * {
+    cursor: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Scrollbar                                                          */
+/* ------------------------------------------------------------------ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--background));
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(rgb(var(--accent)), rgb(var(--accent-glow)));
+  border-radius: 999px;
+  border: 2px solid rgb(var(--background));
+}
+
+::selection {
+  background: rgb(var(--accent) / 0.35);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utilities                                                          */
+/* ------------------------------------------------------------------ */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(
+      120deg,
+      rgb(var(--foreground)) 0%,
+      rgb(var(--accent-glow)) 55%,
+      rgb(var(--accent)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-accent {
+    background: linear-gradient(120deg, rgb(var(--accent-glow)), rgb(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Glassmorphism surface. */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid var(--border);
+  }
+
+  /* Animated gradient border wrapper. */
+  .border-glow {
+    position: relative;
+  }
+  .border-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(120deg, rgba(96, 165, 250, 0.6), transparent 40%, rgba(59, 130, 246, 0.4));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .bg-grid {
+    background-image: linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 50%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 50%, transparent 100%);
+  }
+
+  .glow-blob {
+    filter: blur(80px);
+    opacity: 0.5;
+  }
+}
+
+/* Accessibility: honor reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
