@@ -42,6 +42,27 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "personal-portfolio",
+    title: "Personal Portfolio",
+    summary:
+      "This very site — a cinematic, interactive portfolio with a 3D hero and light/dark mode.",
+    description:
+      "A premium personal portfolio built with Next.js, TypeScript and React Three Fiber. Features an interactive 3D hero scene, smooth scrolling, magnetic interactions, a command palette, and a fully theme-aware design.",
+    categories: ["Web Development"],
+    tech: ["Next.js", "TypeScript", "Tailwind", "Three.js", "Framer Motion"],
+    features: [
+      "Interactive 3D hero scene",
+      "Light / dark theme",
+      "Command palette (⌘K)",
+      "Smooth scroll & animations",
+    ],
+    gradient: "from-blue-500/30 via-indigo-400/20 to-violet-500/30",
+    image: "/PORTFOLIO.png",
+    github: "https://github.com/Heisuyasu/My-Portfolio.git",
+    featured: true,
+    timeline: "2026",
+  },
+  {
     slug: "employee-management-system",
     title: "Employee Management System",
     summary:

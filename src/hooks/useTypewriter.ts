@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
  * Returns the current partial string to render.
  */
 export function useTypewriter(
-  words: string[],
+  words: readonly string[],
   { typeSpeed = 90, deleteSpeed = 45, pause = 1500 } = {}
 ) {
   const [index, setIndex] = useState(0);
