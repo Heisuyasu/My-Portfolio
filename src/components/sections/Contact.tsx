@@ -198,12 +198,6 @@ export function Contact() {
               )}
             </div>
 
-            {!emailjsReady && (
-              <p className="text-[11px] text-muted">
-                Tip: add EmailJS keys in <code>.env.local</code> to send directly.
-                Until then, this opens your mail app.
-              </p>
-            )}
           </form>
         </SpotlightCard>
       </div>
